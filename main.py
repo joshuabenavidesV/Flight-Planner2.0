@@ -2,6 +2,55 @@ import os
 from dotenv import load_dotenv
 import requests
 
+# Dictionary to map airline codes to names
+AIRLINE_NAMES = {
+    "AA": "American Airlines",
+    "DL": "Delta Air Lines",
+    "UA": "United Airlines",
+    "WN": "Southwest Airlines",
+    "AS": "Alaska Airlines",
+    "B6": "JetBlue Airways",
+    "F9": "Frontier Airlines",
+    "NK": "Spirit Airlines",
+    "BA": "British Airways",
+    "LH": "Lufthansa",
+    "AF": "Air France",
+    "KL": "KLM Royal Dutch Airlines",
+    "CX": "Cathay Pacific",
+    "EK": "Emirates",       
+    "QR": "Qatar Airways",
+    "SQ": "Singapore Airlines",
+    "JL": "Japan Airlines",
+    "NH": "All Nippon Airways", 
+    "VA": "Virgin Australia",
+    "NZ": "Air New Zealand",
+    "AC": "Air Canada",
+    "HA": "Hawaiian Airlines",
+    "6X": "Air Odisha",
+}
+
+Airport_Codes = {
+    "DAL": "Dallas Love Field",
+    "LAX": "Los Angeles International Airport",
+    "JFK": "John F. Kennedy International Airport", 
+    "ORD": "O'Hare International Airport",
+    "ATL": "Hartsfield-Jackson Atlanta International Airport",
+    "DFW": "Dallas/Fort Worth International Airport",
+    "SFO": "San Francisco International Airport",
+    "SEA": "Seattle-Tacoma International Airport",
+    "MIA": "Miami International Airport",
+    "DEN": "Denver International Airport",
+    "LAS": "McCarran International Airport",
+    "PHX": "Phoenix Sky Harbor International Airport",
+    "BOS": "Logan International Airport",
+    "IAH": "George Bush Intercontinental Airport",
+    "EWR": "Newark Liberty International Airport",
+    "CLT": "Charlotte Douglas International Airport",
+    "MSP": "Minneapolis-Saint Paul International Airport",
+    "DTW": "Detroit Metropolitan Wayne County Airport",
+
+}
+
 load_dotenv() # Load environment variables from .env file
 
 client_id = os.getenv('AMADEUS_CLIENT_ID')
@@ -21,7 +70,7 @@ response = requests.post(token_url, headers=headers, data=data) # Makes a POST r
 
 if response.status_code == 200:
     access_token = response.json().get('access_token') # Get the access token from the response
-    print("Access token retrieved successfully!")
+    print("Access token retrieved!")
     token_status = response.json().get('state') # Get the token status from the response
     print(f"Token Status: {token_status}")
     print("Welcome to the Flight Search App!")
@@ -54,9 +103,29 @@ params = {
 search_url = 'https://test.api.amadeus.com/v2/shopping/flight-offers' # URL to search for flight offers
 search_response = requests.get(search_url, headers=headers, params=params)
 
-if search_response.status_code == 200:
+if search_response.status_code == 200: # Check if the request was successful
     flight_offers = search_response.json().get('data')
-    print(f" Flights {(flight_offers)}") # Displays the flight offers
+    if not flight_offers:
+        print("No flights found.")
+        exit()
+    print("Available Flights:")
+    
+    for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
+        # Gets information from the flight offer
+        airline_code = offer['itineraries'][0]['segments'][0]['carrierCode'] # Get the airline code from the flight offer
+        airline_name = AIRLINE_NAMES.get(airline_code) # Get the airline name from the dictionary using the airline code
+        total_cost = offer['price']['total'] # Get the total cost of the flight offer
+        bookable_seats = offer.get('numberOfBookableSeats') #
+        airline_departure = offer['itineraries'][0]['segments'][0]['departure']['iataCode']
+        airline_arrival = offer['itineraries'][0]['segments'][0]['arrival']['iataCode']
+        
+        print(f"Flight {i}:")
+        print(f"  Airline: {airline_name} ({airline_code})")
+        print(f"  {airline_departure} to -> {airline_arrival}")
+        print(f"  Bookable Seats: {bookable_seats}")
+        print(f"  Total Cost: for {adults} adult ${total_cost}")
+        print("-" * 40)
+        print("")
 else:
     print("Failed to retrieve flight offers")
     exit()
