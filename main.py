@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import requests
 
 # Dictionary to map airline codes to names
-AIRLINE_NAMES = {
+Airline_Codename = {
     "AA": "American Airlines",
     "DL": "Delta Air Lines",
     "UA": "United Airlines",
@@ -113,18 +113,20 @@ if search_response.status_code == 200: # Check if the request was successful
     for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
         # Gets information from the flight offer
         airline_code = offer['itineraries'][0]['segments'][0]['carrierCode'] # Get the airline code from the flight offer
-        airline_name = AIRLINE_NAMES.get(airline_code) # Get the airline name from the dictionary using the airline code
+        airline_name = Airline_Codename.get(airline_code) # Get the airline name from the dictionary using the airline code
         total_cost = offer['price']['total'] # Get the total cost of the flight offer
         bookable_seats = offer.get('numberOfBookableSeats') #
         airline_departure = offer['itineraries'][0]['segments'][0]['departure']['iataCode']
         airline_arrival = offer['itineraries'][0]['segments'][0]['arrival']['iataCode']
+        departure_name = Airport_Codes.get(airline_departure, airline_departure)
+        arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
         
         print(f"Flight {i}:")
         print(f"  Airline: {airline_name} ({airline_code})")
-        print(f"  {airline_departure} to -> {airline_arrival}")
+        print(f"  Route: {departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
         print(f"  Bookable Seats: {bookable_seats}")
         print(f"  Total Cost: for {adults} adult ${total_cost}")
-        print("-" * 40)
+        print("-" * 80)
         print("")
 else:
     print("Failed to retrieve flight offers")
