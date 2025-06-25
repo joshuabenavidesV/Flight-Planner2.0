@@ -83,25 +83,40 @@ if response.status_code == 200:
 else:
     print("Failed to retrieve access token")
     exit()
-
+    
 # Ask user for flight details
-origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
-if origin not in Airport_Codes: # Check if the origin airport code is valid
-    print(f" '{origin}' is an invalid airport code. Please try again.")
-    origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper()
+while True:
+    origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
+    if origin in Airport_Codes: # Check if the origin airport code is valid
+         break # If valid, break the loop
+    else:
+        print(f" '{origin}' is an invalid airport code. Please try again.")
+    
+while True:
+    destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
+    if destination in Airport_Codes: # Check if the destination airport code is valid
+        break # If valid, break the loop
+    else:
+        print(f" '{destination}' is an invalid destination airport code. Please try again.")
+    
 
-destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
-if destination not in Airport_Codes: # Check if the destination airport code is valid
-    print(f" '{destination}' is an invalid destination airport code. Please try again.")
-    destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper()
-date = input("Enter departure date (YYYY-MM-DD): ").strip()
-if not date: # Check if the date is empty
-    print("Date cannot be empty. Please try again.")
-    date = input("Enter departure date (YYYY-MM-DD): ").strip()
-adults = input("How many adults will be flying?: ").strip()
-if int(adults) <= 0:
-    print(f"'{adults}' number of adults cannot fly. Please try again.")
+while True:
+    date = input("Enter departure date (MM-DD-YYYY): ").strip()
+    if len(date) == 10 and date[2] == '-' and date[5] == '-' :
+        month, day, year = date.split('-')
+        if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
+            # Convert to YYYY-MM-DD for the API
+            api_date = f"{year}-{month}-{day}"
+            break
+    print("Invalid date format. Please use MM-DD-YYYY.")
+
+while True:# Ask for the number of adults flying   
     adults = input("How many adults will be flying?: ").strip()
+    if adults.isdigit() and int(adults) > 0:
+        break
+    else:
+        print(f"'{adults}' number of adults cannot fly. Please try again.")
+    
 
 
 print(f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
@@ -115,7 +130,7 @@ headers = {
 params = {
     'originLocationCode': origin,
     'destinationLocationCode': destination,
-    'departureDate': date,
+    'departureDate': api_date, # Departure date in YYYY-MM-DD format
     'adults': adults,
     'currencyCode': 'USD',
 }
@@ -135,6 +150,11 @@ if search_response.status_code == 200: # Check if the request was successful
         # Gets information from the flight offer
         itinerary = offer['itineraries'][0] # Get the first itinerary from the offer
         segments = itinerary['segments'] # Get the segments of the itinerary
+        airline_arrival = segments[-1]['arrival']['iataCode']
+
+    # Only show flights that arrive at the requested destination
+        if airline_arrival != destination:
+            continue
         num_stops = len(segments) - 1  # 0 stops = direct, 1 = one stop, etc.
 
         airline_code = segments[0]['carrierCode'] # Get the airline code from the first segment
@@ -153,7 +173,7 @@ if search_response.status_code == 200: # Check if the request was successful
         print(f"  Bookable Seats: {bookable_seats}")
         print(f"  Total Stops: {num_stops}")
         print(f"  Total Cost: for {adults} adult ${total_cost}")
-        print("-" * 82) # Print a separator line
+        print("-" * 82) # Prints a separator line
         print("")
 else:
     print("Failed to retrieve flight offers")
