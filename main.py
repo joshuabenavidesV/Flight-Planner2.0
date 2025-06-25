@@ -86,9 +86,23 @@ else:
 
 # Ask user for flight details
 origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
+if origin not in Airport_Codes: # Check if the origin airport code is valid
+    print(f" '{origin}' is an invalid airport code. Please try again.")
+    origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper()
+
 destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
+if destination not in Airport_Codes: # Check if the destination airport code is valid
+    print(f" '{destination}' is an invalid destination airport code. Please try again.")
+    destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper()
 date = input("Enter departure date (YYYY-MM-DD): ").strip()
+if not date: # Check if the date is empty
+    print("Date cannot be empty. Please try again.")
+    date = input("Enter departure date (YYYY-MM-DD): ").strip()
 adults = input("How many adults will be flying?: ").strip()
+if int(adults) <= 0:
+    print(f"'{adults}' number of adults cannot fly. Please try again.")
+    adults = input("How many adults will be flying?: ").strip()
+
 
 print(f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
 
