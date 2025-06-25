@@ -73,7 +73,13 @@ if response.status_code == 200:
     print("Access token retrieved!")
     token_status = response.json().get('state') # Get the token status from the response
     print(f"Token Status: {token_status}")
-    print("Welcome to the Flight Search App!")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("Welcome to the Flight Planner!")
 else:
     print("Failed to retrieve access token")
     exit()
@@ -109,6 +115,7 @@ if search_response.status_code == 200: # Check if the request was successful
         print("No flights found.")
         exit()
     print("Available Flights:")
+    print("")
     
     for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
         # Gets information from the flight offer
@@ -116,17 +123,18 @@ if search_response.status_code == 200: # Check if the request was successful
         airline_name = Airline_Codename.get(airline_code) # Get the airline name from the dictionary using the airline code
         total_cost = offer['price']['total'] # Get the total cost of the flight offer
         bookable_seats = offer.get('numberOfBookableSeats') #
-        airline_departure = offer['itineraries'][0]['segments'][0]['departure']['iataCode']
-        airline_arrival = offer['itineraries'][0]['segments'][0]['arrival']['iataCode']
-        departure_name = Airport_Codes.get(airline_departure, airline_departure)
-        arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
+        airline_departure = offer['itineraries'][0]['segments'][0]['departure']['iataCode'] # Get the departure airport code from the flight offer
+        airline_arrival = offer['itineraries'][0]['segments'][0]['arrival']['iataCode'] # Get the departure and arrival airport codes from the flight offer
+        departure_name = Airport_Codes.get(airline_departure, airline_departure) # Get the departure airport name from the dictionary using the airport code
+        arrival_name = Airport_Codes.get(airline_arrival, airline_arrival) # Get the arrival airport name from the dictionary using the airport code
         
         print(f"Flight {i}:")
+        print("")
         print(f"  Airline: {airline_name} ({airline_code})")
         print(f"  Route: {departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
         print(f"  Bookable Seats: {bookable_seats}")
         print(f"  Total Cost: for {adults} adult ${total_cost}")
-        print("-" * 80)
+        print("-" * 82) # Print a separator line
         print("")
 else:
     print("Failed to retrieve flight offers")
