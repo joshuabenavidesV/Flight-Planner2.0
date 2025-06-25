@@ -83,98 +83,103 @@ if response.status_code == 200:
 else:
     print("Failed to retrieve access token")
     exit()
-    
+while True:
 # Ask user for flight details
-while True:
-    origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
-    if origin in Airport_Codes: # Check if the origin airport code is valid
-         break # If valid, break the loop
-    else:
-        print(f" '{origin}' is an invalid airport code. Please try again.")
+    while True:
+        origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
+        if origin in Airport_Codes: # Check if the origin airport code is valid
+            break # If valid, break the loop
+        else:
+            print(f" '{origin}' is an invalid airport code. Please try again.")
     
-while True:
-    destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
-    if destination in Airport_Codes: # Check if the destination airport code is valid
-        break # If valid, break the loop
-    else:
-        print(f" '{destination}' is an invalid destination airport code. Please try again.")
-    
+    while True:
+        destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
+        if destination in Airport_Codes: # Check if the destination airport code is valid
+            break # If valid, break the loop
+        else:
+            print(f" '{destination}' is an invalid destination airport code. Please try again.")
+        
 
-while True:
-    date = input("Enter departure date (MM-DD-YYYY): ").strip()
-    if len(date) == 10 and date[2] == '-' and date[5] == '-' :
-        month, day, year = date.split('-')
-        if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
-            # Convert to YYYY-MM-DD for the API
-            api_date = f"{year}-{month}-{day}"
+    while True:
+        date = input("Enter departure date (MM-DD-YYYY): ").strip()
+        if len(date) == 10 and date[2] == '-' and date[5] == '-' :
+            month, day, year = date.split('-')
+            if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
+                # Convert to YYYY-MM-DD for the API
+                api_date = f"{year}-{month}-{day}"
+                break
+        print("Invalid date format. Please use MM-DD-YYYY.")
+
+    while True:# Ask for the number of adults flying   
+        adults = input("How many adults will be flying?: ").strip()
+        if adults.isdigit() and int(adults) > 0:
             break
-    print("Invalid date format. Please use MM-DD-YYYY.")
+        else:
+            print(f"'{adults}' number of adults cannot fly. Please try again.")
+        
 
-while True:# Ask for the number of adults flying   
-    adults = input("How many adults will be flying?: ").strip()
-    if adults.isdigit() and int(adults) > 0:
-        break
+
+    print(f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
+
+    # Searches Flights
+    headers = {
+        'Authorization': f'Bearer {access_token}', # Bearer token for authorization
+        'Accept': 'application/json' # Accept header to specify the response format
+    }
+
+    params = {
+        'originLocationCode': origin,
+        'destinationLocationCode': destination,
+        'departureDate': api_date, # Departure date in YYYY-MM-DD format
+        'adults': adults,
+        'currencyCode': 'USD',
+    }
+
+    search_url = 'https://test.api.amadeus.com/v2/shopping/flight-offers' # URL to search for flight offers
+    search_response = requests.get(search_url, headers=headers, params=params)
+
+    if search_response.status_code == 200: # Check if the request was successful
+        flight_offers = search_response.json().get('data')
+        if not flight_offers:
+            print("No flights found.")
+            exit()
+        print("Available Flights:")
+        print("")
+        
+        for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
+            # Gets information from the flight offer
+            itinerary = offer['itineraries'][0] # Get the first itinerary from the offer
+            segments = itinerary['segments'] # Get the segments of the itinerary
+            airline_arrival = segments[-1]['arrival']['iataCode']
+
+        # Only show flights that arrive at the requested destination
+            if airline_arrival != destination:
+                continue
+            num_stops = len(segments) - 1  # 0 stops = direct, 1 = one stop, etc.
+
+            airline_code = segments[0]['carrierCode'] # Get the airline code from the first segment
+            airline_name = Airline_Codename.get(airline_code, airline_code) # Get the airline name from the code, or use the code if not found
+            total_cost = offer['price']['total']
+            bookable_seats = offer.get('numberOfBookableSeats')
+            airline_departure = segments[0]['departure']['iataCode'] # Get the departure airport code from the first segment
+            airline_arrival = segments[-1]['arrival']['iataCode'] # Get the arrival airport code from the last segment
+            departure_name = Airport_Codes.get(airline_departure, airline_departure)
+            arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
+
+            print(f"Flight {i}:")
+            print("")
+            print(f"  Airline: {airline_name} ({airline_code})")
+            print(f"  Route: {departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
+            print(f"  Bookable Seats: {bookable_seats}")
+            print(f"  Total Stops: {num_stops}")
+            print(f"  Total Cost: for {adults} adult ${total_cost}")
+            print("-" * 82) # Prints a separator line
+            print("")
     else:
-        print(f"'{adults}' number of adults cannot fly. Please try again.")
-    
-
-
-print(f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
-
-# Searches Flights
-headers = {
-    'Authorization': f'Bearer {access_token}', # Bearer token for authorization
-    'Accept': 'application/json' # Accept header to specify the response format
-}
-
-params = {
-    'originLocationCode': origin,
-    'destinationLocationCode': destination,
-    'departureDate': api_date, # Departure date in YYYY-MM-DD format
-    'adults': adults,
-    'currencyCode': 'USD',
-}
-
-search_url = 'https://test.api.amadeus.com/v2/shopping/flight-offers' # URL to search for flight offers
-search_response = requests.get(search_url, headers=headers, params=params)
-
-if search_response.status_code == 200: # Check if the request was successful
-    flight_offers = search_response.json().get('data')
-    if not flight_offers:
-        print("No flights found.")
+        print("Failed to retrieve flight offers")
         exit()
-    print("Available Flights:")
-    print("")
-    
-    for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
-        # Gets information from the flight offer
-        itinerary = offer['itineraries'][0] # Get the first itinerary from the offer
-        segments = itinerary['segments'] # Get the segments of the itinerary
-        airline_arrival = segments[-1]['arrival']['iataCode']
-
-    # Only show flights that arrive at the requested destination
-        if airline_arrival != destination:
-            continue
-        num_stops = len(segments) - 1  # 0 stops = direct, 1 = one stop, etc.
-
-        airline_code = segments[0]['carrierCode'] # Get the airline code from the first segment
-        airline_name = Airline_Codename.get(airline_code, airline_code) # Get the airline name from the code, or use the code if not found
-        total_cost = offer['price']['total']
-        bookable_seats = offer.get('numberOfBookableSeats')
-        airline_departure = segments[0]['departure']['iataCode'] # Get the departure airport code from the first segment
-        airline_arrival = segments[-1]['arrival']['iataCode'] # Get the arrival airport code from the last segment
-        departure_name = Airport_Codes.get(airline_departure, airline_departure)
-        arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
-
-        print(f"Flight {i}:")
-        print("")
-        print(f"  Airline: {airline_name} ({airline_code})")
-        print(f"  Route: {departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
-        print(f"  Bookable Seats: {bookable_seats}")
-        print(f"  Total Stops: {num_stops}")
-        print(f"  Total Cost: for {adults} adult ${total_cost}")
-        print("-" * 82) # Prints a separator line
-        print("")
-else:
-    print("Failed to retrieve flight offers")
-    exit()
+    # Ask user if they want to search for another flight
+    again = input("Would you like to search for another flight? (y/n): ").strip().lower()
+    if again != "y":
+        print("Thank you for using the Flight Planner!")
+        break
