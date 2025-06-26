@@ -110,14 +110,21 @@ while True:
         
 
     while True:
-        date = input(Fore.LIGHTBLUE_EX +"Enter departure date, in this format " + Fore.GREEN + "(MM-DD-YYYY): " + Fore.RESET).strip()
-        if len(date) == 10 and date[2] == '-' and date[5] == '-' :
+        date = input(Fore.LIGHTBLUE_EX + "Enter departure date, in this format " + Fore.GREEN + "(MM-DD-YYYY): " + Fore.RESET).strip()
+    # Check if the date is in the correct format
+        if len(date) == 10 and date[2] == '-' and date[5] == '-':
             month, day, year = date.split('-')
-            if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
-                # Convert to YYYY-MM-DD for the API
-                api_date = f"{year}-{month}-{day}"
-                break
-        print(Fore.RED +"Invalid date format. Please use MM-DD-YYYY.")
+            # Check if month, day, and year are numbers
+            if month.isdigit() and day.isdigit() and year.isdigit():
+                month = int(month)
+                day = int(day)
+                year = int(year)
+                # Check if the numbers are in valid ranges
+                if 1 <= month <= 12 and 1 <= day <= 31 and len(str(year)) == 4 and year >= 2025:
+                    # Convert to YYYY-MM-DD for the API
+                    api_date = f"{year}-{month}-{day}"
+                    break
+        print(Fore.RED + "Invalid date format. Please use MM-DD-YYYY.")
 
     while True:# Ask for the number of adults flying   
         adults = input(Fore.LIGHTBLUE_EX +"How many adults will be flying?: " + Fore.RESET).strip()
