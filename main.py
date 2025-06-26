@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
+from colorama import init, Fore, Back, Style
 
 # Dictionary to map airline codes to names
 Airline_Codename = {
@@ -52,6 +53,8 @@ Airport_Codes = {
 }
 
 load_dotenv() # Load environment variables from .env file
+init() # Initialize colorama for colored output
+
 
 client_id = os.getenv('AMADEUS_CLIENT_ID')
 client_secret = os.getenv('AMADEUS_CLIENT_SECRET')
@@ -70,56 +73,58 @@ response = requests.post(token_url, headers=headers, data=data) # Makes a POST r
 
 if response.status_code == 200:
     access_token = response.json().get('access_token') # Get the access token from the response
-    print("Access token retrieved!")
+    print(Fore.GREEN +"Access token retrieved!")
     token_status = response.json().get('state') # Get the token status from the response
-    print(f"Token Status: {token_status}")
+    print(Fore.GREEN + f"Token Status: {token_status}")
     print("")
     print("")
     print("")
     print("")
     print("")
     print("")
-    print("Welcome to the Flight Planner!")
+    print(Fore.BLUE + Style.BRIGHT + "                     Welcome to the Flight Planner!")
+    print("")
+    print("")
 else:
-    print("Failed to retrieve access token")
+    print( Fore.RED +"Failed to retrieve access token")
     exit()
 while True:
 # Ask user for flight details
     while True:
-        origin = input("Where would you like to depart, please enter airport code (ex: DAL): ").strip().upper() #strip() is used to remove any leading or trailing whitespace
+        origin = input(Fore.LIGHTBLUE_EX + "Where would you like to depart, please enter airport code (ex: DAL): " + Fore.RESET).strip().upper() #strip() is used to remove any leading or trailing whitespace
         if origin in Airport_Codes: # Check if the origin airport code is valid
             break # If valid, break the loop
         else:
-            print(f" '{origin}' is an invalid airport code. Please try again.")
+            print(Fore.RED + f" '{origin}' is an invalid airport code. Please try again.")
     
     while True:
-        destination = input("Where would you like to go? Please enter airport code (ex: LAX): ").strip().upper() #upper() is used to convert the input to uppercase
+        destination = input(Fore.LIGHTBLUE_EX +"Where would you like to go? Please enter airport code (ex: LAX): " + Fore.RESET).strip().upper() #upper() is used to convert the input to uppercase
         if destination in Airport_Codes: # Check if the destination airport code is valid
             break # If valid, break the loop
         else:
-            print(f" '{destination}' is an invalid destination airport code. Please try again.")
+            print(Fore.RED + f" '{destination}' is an invalid destination airport code. Please try again.")
         
 
     while True:
-        date = input("Enter departure date (MM-DD-YYYY): ").strip()
+        date = input(Fore.LIGHTBLUE_EX +"Enter departure date (MM-DD-YYYY): " + Fore.RESET).strip()
         if len(date) == 10 and date[2] == '-' and date[5] == '-' :
             month, day, year = date.split('-')
             if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
                 # Convert to YYYY-MM-DD for the API
                 api_date = f"{year}-{month}-{day}"
                 break
-        print("Invalid date format. Please use MM-DD-YYYY.")
+        print(Fore.RED +"Invalid date format. Please use MM-DD-YYYY.")
 
     while True:# Ask for the number of adults flying   
-        adults = input("How many adults will be flying?: ").strip()
+        adults = input(Fore.LIGHTBLUE_EX +"How many adults will be flying?: " + Fore.RESET).strip()
         if adults.isdigit() and int(adults) > 0:
             break
         else:
-            print(f"'{adults}' number of adults cannot fly. Please try again.")
+            print(Fore.RED + f"'{adults}' number of adults cannot fly. Please try again.")
         
 
 
-    print(f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
+    print(Fore.YELLOW +f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
 
     # Searches Flights
     headers = {
@@ -141,9 +146,9 @@ while True:
     if search_response.status_code == 200: # Check if the request was successful
         flight_offers = search_response.json().get('data')
         if not flight_offers:
-            print("No flights found.")
+            print(Fore.RED +"No flights found.")
             exit()
-        print("Available Flights:")
+        print(Fore.GREEN +"Available Flights:")
         print("")
         
         for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
@@ -166,20 +171,20 @@ while True:
             departure_name = Airport_Codes.get(airline_departure, airline_departure)
             arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
 
-            print(f"Flight {i}:")
+            print(Fore.WHITE + Style.BRIGHT +  f"Flight {i}:")
             print("")
-            print(f"  Airline: {airline_name} ({airline_code})")
-            print(f"  Route: {departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
-            print(f"  Bookable Seats: {bookable_seats}")
-            print(f"  Total Stops: {num_stops}")
-            print(f"  Total Cost: for {adults} adult ${total_cost}")
-            print("-" * 82) # Prints a separator line
+            print(Fore.WHITE + "  Airline: " + Fore.BLUE + f"{airline_name} ({airline_code})")
+            print(Fore.WHITE + f"  Route: " + Fore.BLUE + f"{departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
+            print(Fore.WHITE + f"  Bookable Seats: " + Fore.BLUE + f"{bookable_seats}")
+            print(Fore.WHITE + f"  Total Stops: " + Fore.BLUE + f"{num_stops}")
+            print(Fore.WHITE + f"  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${total_cost}")
+            print(Fore.WHITE + "-" * 82) # Prints a separator line
             print("")
     else:
-        print("Failed to retrieve flight offers")
+        print(Fore.RED +"Failed to retrieve flight offers")
         exit()
     # Ask user if they want to search for another flight
-    again = input("Would you like to search for another flight? (y/n): ").strip().lower()
+    again = input(Fore.CYAN +"Would you like to search for another flight? (y/n): ").strip().lower()
     if again != "y":
-        print("Thank you for using the Flight Planner!")
+        print(Fore.RED +"Thank you for using the Flight Planner! Bye bye")
         break
