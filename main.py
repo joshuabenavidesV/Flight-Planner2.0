@@ -78,17 +78,15 @@ if response.status_code == 200:
     print(Fore.GREEN + f"Token Status: {token_status}")
     print("")
     print("")
-    print("")
-    print("")
-    print("")
-    print(Fore.MAGENTA + "=" * 60)
-    print(Fore.CYAN + Style.BRIGHT + r"""
+    
+    print(Fore.MAGENTA + "=" * 82)
+    print(Fore.RESET + r"""
                         __|__
                 --o--o--( _ )--o--o--
                          / \
-""")
-    print(Fore.BLUE + Style.BRIGHT + "            Welcome to the Flight Planner!")
-    print(Fore.MAGENTA + "=" * 60)
+                                                        """)
+    print(Fore.BLUE + Style.BRIGHT + "            Welcome to the Flight Planner!✈️")
+    print(Fore.MAGENTA + "=" * 82)
     print("")
     print("")
 else:
@@ -112,7 +110,7 @@ while True:
         
 
     while True:
-        date = input(Fore.LIGHTBLUE_EX +"Enter departure date (MM-DD-YYYY): " + Fore.RESET).strip()
+        date = input(Fore.LIGHTBLUE_EX +"Enter departure date, in this format " + Fore.GREEN + "(MM-DD-YYYY): " + Fore.RESET).strip()
         if len(date) == 10 and date[2] == '-' and date[5] == '-' :
             month, day, year = date.split('-')
             if 1 <= int(month) <= 12 and 1 <= int(day) <= 31 and len(year) == 4 and year <= "2025": # Validate the date format and range
@@ -155,9 +153,12 @@ while True:
             print(Fore.RED +"No flights found.")
             continue # If no flights found, go to the next loop
 
-            
-        print(Fore.GREEN +"Available Flights:")
+        print("")    
+        print(Fore.GREEN +"All Available Flights:")
         print("")
+        print(Fore.MAGENTA + "=" * 82)
+
+        cheapest_flights = []
         
         for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
             # Gets information from the flight offer
@@ -179,20 +180,52 @@ while True:
             departure_name = Airport_Codes.get(airline_departure, airline_departure)
             arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
 
-            print(Fore.WHITE + Style.BRIGHT +  f"Flight {i}:")
+            # Store all relevant info for cheapest flight
+            cheapest_flights += [{
+                "index": i,
+                "airline_name": airline_name,
+                "airline_code": airline_code,
+                "departure_name": departure_name,
+                "departure_code": airline_departure,
+                "arrival_name": arrival_name,
+                "arrival_code": airline_arrival,
+                "bookable_seats": bookable_seats,
+                "num_stops": num_stops,
+                "total_cost": total_cost
+            }]
+            
+            print(Fore.WHITE + Style.BRIGHT +  f"✈️  Flight {i}:")
             print("")
-            print(Fore.WHITE + "  Airline: " + Fore.BLUE + f"{airline_name} ({airline_code})")
-            print(Fore.WHITE + f"  Route: " + Fore.BLUE + f"{departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
-            print(Fore.WHITE + f"  Bookable Seats: " + Fore.BLUE + f"{bookable_seats}")
-            print(Fore.WHITE + f"  Total Stops: " + Fore.BLUE + f"{num_stops}")
-            print(Fore.WHITE + f"  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${total_cost}")
-            print(Fore.WHITE + "-" * 82) # Prints a separator line
+            print(Fore.WHITE +  "🧳  Airline: " + Fore.BLUE + f"{airline_name} ({airline_code})")
+            print(Fore.WHITE + f"    Route: " + Fore.BLUE + f"{departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
+            print(Fore.WHITE + f"💺 Bookable Seats: " + Fore.BLUE + f"{bookable_seats}")
+            print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{num_stops}")
+            print(Fore.WHITE + f"💲 Total Cost: " +  Fore.BLUE + f"for {adults} adult ${total_cost}")
+            print(Fore.MAGENTA + "=" * 82) # Prints a separator line
             print("")
+        
+        # Print the cheapest flight
+    if cheapest_flights:
+        cheapest = cheapest_flights[0]
+        for flight in cheapest_flights:
+            if float(flight["total_cost"]) < float(cheapest["total_cost"]):
+                cheapest = flight
+        
+        print(Fore.GREEN + Style.BRIGHT + "Cheapest Flight:")
+        print("")
+        print(Fore.WHITE + f"  Airline: " + Fore.BLUE + f"{cheapest['airline_name']} ({cheapest['airline_code']})")
+        print(Fore.WHITE + f"  Route: " + Fore.BLUE + f"{cheapest['departure_name']} ({cheapest['departure_code']}) to -> {cheapest['arrival_name']} ({cheapest['arrival_code']})")
+        print(Fore.WHITE + f"  Bookable Seats: " + Fore.BLUE + f"{cheapest['bookable_seats']}")
+        print(Fore.WHITE + f"  Total Stops: " + Fore.BLUE + f"{cheapest['num_stops']}")
+        print(Fore.WHITE + f"  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${cheapest['total_cost']}")
+        print(Fore.MAGENTA + "=" * 82)
+        print("")
     else:
         print(Fore.RED +"Failed to retrieve flight offers")
+
     # Ask user if they want to search for another flight
     again = input(Fore.CYAN +"Would you like to search for another flight? (y/n): ").strip().lower()
     if again != "y":
         print("")
         print(Fore.RED +"Thank you for using the Flight Planner! Bye bye")
-        break
+        exit() # Exit the program if the user does not want to search for another flight
