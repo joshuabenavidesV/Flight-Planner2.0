@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Style
 
 # Dictionary to map airline codes to names
 Airline_Codename = {
@@ -81,13 +81,19 @@ if response.status_code == 200:
     print("")
     print("")
     print("")
-    print("")
-    print(Fore.BLUE + Style.BRIGHT + "                     Welcome to the Flight Planner!")
+    print(Fore.MAGENTA + "=" * 60)
+    print(Fore.CYAN + Style.BRIGHT + r"""
+                        __|__
+                --o--o--( _ )--o--o--
+                         / \
+""")
+    print(Fore.BLUE + Style.BRIGHT + "            Welcome to the Flight Planner!")
+    print(Fore.MAGENTA + "=" * 60)
     print("")
     print("")
 else:
     print( Fore.RED +"Failed to retrieve access token")
-    exit()
+    exit() # Exit the program if the token retrieval fails
 while True:
 # Ask user for flight details
     while True:
@@ -147,7 +153,9 @@ while True:
         flight_offers = search_response.json().get('data')
         if not flight_offers:
             print(Fore.RED +"No flights found.")
-            exit()
+            continue # If no flights found, go to the next loop
+
+            
         print(Fore.GREEN +"Available Flights:")
         print("")
         
@@ -182,9 +190,9 @@ while True:
             print("")
     else:
         print(Fore.RED +"Failed to retrieve flight offers")
-        exit()
     # Ask user if they want to search for another flight
     again = input(Fore.CYAN +"Would you like to search for another flight? (y/n): ").strip().lower()
     if again != "y":
+        print("")
         print(Fore.RED +"Thank you for using the Flight Planner! Bye bye")
         break
