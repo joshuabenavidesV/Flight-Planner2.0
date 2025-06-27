@@ -201,6 +201,10 @@ while True:
             arrival_time = segments[-1]['arrival']['at'] # Get the arrival time from the last segment
             departure_time = segments[0]['departure']['at'] # Get the departure time from the first segment
             
+            # Check if there are enough bookable seats for the requested number of adults
+            if int(adults) > bookable_seats:
+                print(Fore.YELLOW + f"Skipping Flight {i}: Only {bookable_seats} seat(s) available, but {adults} requested.")
+                continue  # Skip this flight if not enough seats
 
             # Store all relevant info for cheapest flight
             cheapest_flights.append({ #append adds an item to the end of a list
