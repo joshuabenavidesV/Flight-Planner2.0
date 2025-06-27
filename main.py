@@ -144,6 +144,17 @@ while True:
             print(Fore.RED + f"'{adults}' number of adults cannot fly. Please try again.")
         
 
+    supported_currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"]
+    while True:
+        print(Fore.LIGHTBLUE_EX + "Supported currencies: " + Fore.GREEN + f"{supported_currencies}" + Fore.RESET)
+        currency = input(Fore.LIGHTBLUE_EX + "Enter your preferred currency code " + Fore.GREEN + "(default is USD): " + Fore.RESET).strip().upper()
+        if currency == "":
+            currency = "USD"
+            break
+        elif currency in supported_currencies:
+            break
+        else:
+            print(Fore.RED + f"'{currency}' is not a supported currency. Please try again.")
 
     print(Fore.YELLOW +f"Searching flights from {origin} to {destination} on {date} for {adults} adults")
 
@@ -158,7 +169,7 @@ while True:
         'destinationLocationCode': destination,
         'departureDate': api_date, # Departure date in YYYY-MM-DD format
         'adults': adults,
-        'currencyCode': 'USD',
+        'currencyCode': currency, # Currency code for the prices
     }
 
     search_url = 'https://test.api.amadeus.com/v2/shopping/flight-offers' # URL to search for flight offers
@@ -201,10 +212,8 @@ while True:
             arrival_time = segments[-1]['arrival']['at'] # Get the arrival time from the last segment
             departure_time = segments[0]['departure']['at'] # Get the departure time from the first segment
             
-            # Check if there are enough bookable seats for the requested number of adults
-            if int(adults) > bookable_seats:
-                print(Fore.YELLOW + f"Skipping Flight {i}: Only {bookable_seats} seat(s) available, but {adults} requested.")
-                continue  # Skip this flight if not enough seats
+            if int(adults) > bookable_seats: # Check if the number of adults exceeds the number of bookable seats
+                continue  # If it does, skip this flight offer
 
             # Store all relevant info for cheapest flight
             cheapest_flights.append({ #append adds an item to the end of a list
@@ -230,7 +239,7 @@ while True:
             print(Fore.WHITE + f"    Arrival: " + Fore.BLUE + f"{arrival_time}")
             print(Fore.WHITE + f"💺 Bookable Seats: " + Fore.BLUE + f"{bookable_seats}")
             print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{num_stops}")
-            print(Fore.WHITE + f"💲 Total Cost: " +  Fore.BLUE + f"for {adults} adult ${total_cost}")
+            print(Fore.WHITE + f"💲 Total Cost: " +  Fore.BLUE + f"for {adults} adult  ${total_cost} {currency}")
             print(Fore.MAGENTA + "=" * 82) # Prints a separator line
             print("")
         
@@ -252,11 +261,12 @@ while True:
         print(Fore.WHITE + f"   Arrival: " + Fore.BLUE + f"{cheapest['arrival_time']}")
         print(Fore.WHITE +f"💺  Bookable Seats: " + Fore.BLUE + f"{cheapest['bookable_seats']}")
         print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{cheapest['num_stops']}")
-        print(Fore.WHITE +f"💲  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${cheapest['total_cost']}")
+        print(Fore.WHITE +f"💲  Total Cost: " +  Fore.BLUE + f"for {adults} adult  ${cheapest['total_cost']} {currency}")
         print(Fore.MAGENTA + "=" * 82)
         print("")
     else:
         print(Fore.RED +"Failed to retrieve flight offers")
+        print(Fore.YELLOW + "API response details: " + search_response.text)
 
 
 
