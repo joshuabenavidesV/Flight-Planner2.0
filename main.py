@@ -111,7 +111,7 @@ while True:
 
     while True:
         date = input(Fore.LIGHTBLUE_EX + "Enter departure date, in this format " + Fore.GREEN + "(MM-DD-YYYY): " + Fore.RESET).strip()
-    # Check if the date is in the correct format
+        # Check if the date is in the correct format
         if len(date) == 10 and date[2] == '-' and date[5] == '-':
             month, day, year = date.split('-')
             # Check if month, day, and year are numbers
@@ -121,8 +121,18 @@ while True:
                 year = int(year)
                 # Check if the numbers are in valid ranges
                 if 1 <= month <= 12 and 1 <= day <= 31 and len(str(year)) == 4 and year >= 2025:
-                    # Convert to YYYY-MM-DD for the API
-                    api_date = f"{year}-{month}-{day}"
+                    # add leading zeros
+                    if month < 10:
+                        month_str = "0" + str(month)
+                    else:
+                        month_str = str(month)
+
+                    if day < 10:
+                        day_str = "0" + str(day)
+                    else:
+                        day_str = str(day)
+
+                    api_date = str(year) + "-" + month_str + "-" + day_str
                     break
         print(Fore.RED + "Invalid date format. Please use MM-DD-YYYY.")
 
