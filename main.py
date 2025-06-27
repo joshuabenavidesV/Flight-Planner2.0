@@ -146,8 +146,8 @@ while True:
 
     supported_currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"]
     while True:
-        print(Fore.LIGHTBLUE_EX + "Supported currencies: " + Fore.GREEN + f"{supported_currencies}" + Fore.RESET)
-        currency = input(Fore.LIGHTBLUE_EX + "Enter your preferred currency code " + Fore.GREEN + "(default is USD): " + Fore.RESET).strip().upper()
+        currency = input(Fore.LIGHTBLUE_EX + "Enter preferred currency code " + Fore.GREEN + "Supported currencies: " 
+                         + Fore.GREEN + f"{supported_currencies}" + Fore.LIGHTBLUE_EX + " default is USD): " + Fore.RESET).strip().upper()
         if currency == "":
             currency = "USD"
             break
