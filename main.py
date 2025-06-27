@@ -95,14 +95,14 @@ else:
 while True:
 # Ask user for flight details
     while True:
-        origin = input(Fore.LIGHTBLUE_EX + "Where would you like to depart, please enter airport code (ex: DAL): " + Fore.RESET).strip().upper() #strip() is used to remove any leading or trailing whitespace
+        origin = input(Fore.LIGHTBLUE_EX + "Where would you like to depart, please enter airport code" + Fore.GREEN + " (ex: DAL): " + Fore.RESET).strip().upper() #strip() is used to remove any leading or trailing whitespace
         if origin in Airport_Codes: # Check if the origin airport code is valid
             break # If valid, break the loop
         else:
             print(Fore.RED + f" '{origin}' is an invalid airport code. Please try again.")
     
     while True:
-        destination = input(Fore.LIGHTBLUE_EX +"Where would you like to go? Please enter airport code (ex: LAX): " + Fore.RESET).strip().upper() #upper() is used to convert the input to uppercase
+        destination = input(Fore.LIGHTBLUE_EX +"Where would you like to go? Please enter airport code" + Fore.GREEN + " (ex: LAX): " + Fore.RESET).strip().upper() #upper() is used to convert the input to uppercase
         if destination in Airport_Codes: # Check if the destination airport code is valid
             break # If valid, break the loop
         else:
@@ -176,7 +176,7 @@ while True:
         # Only show flights that arrive at the requested destination
             if airline_arrival != destination:
                 continue
-            num_stops = len(segments) - 1  # 0 stops = direct, 1 = one stop, etc.
+            num_stops = len(segments) - 1  # 0 stops = direct, 1 = one stop
 
             airline_code = segments[0]['carrierCode'] # Get the airline code from the first segment
             airline_name = Airline_Codename.get(airline_code, airline_code) # Get the airline name from the code, or use the code if not found
@@ -186,6 +186,10 @@ while True:
             airline_arrival = segments[-1]['arrival']['iataCode'] # Get the arrival airport code from the last segment
             departure_name = Airport_Codes.get(airline_departure, airline_departure)
             arrival_name = Airport_Codes.get(airline_arrival, airline_arrival)
+
+            arrival_time = segments[-1]['arrival']['at'] # Get the arrival time from the last segment
+            departure_time = segments[0]['departure']['at'] # Get the departure time from the first segment
+            
 
             # Store all relevant info for cheapest flight
             cheapest_flights += [{
@@ -198,13 +202,17 @@ while True:
                 "arrival_code": airline_arrival,
                 "bookable_seats": bookable_seats,
                 "num_stops": num_stops,
-                "total_cost": total_cost
+                "total_cost": total_cost,
+                "departure_time": departure_time,
+                "arrival_time": arrival_time
             }]
             
             print(Fore.WHITE + Style.BRIGHT +  f"✈️  Flight {i}:")
             print("")
             print(Fore.WHITE +  "🧳  Airline: " + Fore.BLUE + f"{airline_name} ({airline_code})")
             print(Fore.WHITE + f"    Route: " + Fore.BLUE + f"{departure_name} ({airline_departure}) to -> {arrival_name} ({airline_arrival})")
+            print(Fore.WHITE + f"    Departure: " + Fore.BLUE + f"{departure_time}")
+            print(Fore.WHITE + f"    Arrival: " + Fore.BLUE + f"{arrival_time}")
             print(Fore.WHITE + f"💺 Bookable Seats: " + Fore.BLUE + f"{bookable_seats}")
             print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{num_stops}")
             print(Fore.WHITE + f"💲 Total Cost: " +  Fore.BLUE + f"for {adults} adult ${total_cost}")
@@ -220,11 +228,13 @@ while True:
         
         print(Fore.GREEN + Style.BRIGHT + "Cheapest Flight:")
         print("")
-        print(Fore.WHITE + f"  Airline: " + Fore.BLUE + f"{cheapest['airline_name']} ({cheapest['airline_code']})")
-        print(Fore.WHITE + f"  Route: " + Fore.BLUE + f"{cheapest['departure_name']} ({cheapest['departure_code']}) to -> {cheapest['arrival_name']} ({cheapest['arrival_code']})")
-        print(Fore.WHITE + f"  Bookable Seats: " + Fore.BLUE + f"{cheapest['bookable_seats']}")
-        print(Fore.WHITE + f"  Total Stops: " + Fore.BLUE + f"{cheapest['num_stops']}")
-        print(Fore.WHITE + f"  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${cheapest['total_cost']}")
+        print(Fore.WHITE + f"🧳 Airline: " + Fore.BLUE + f"{cheapest['airline_name']} ({cheapest['airline_code']})")
+        print(Fore.WHITE + f"   Route: " + Fore.BLUE + f"{cheapest['departure_name']} ({cheapest['departure_code']}) to -> {cheapest['arrival_name']} ({cheapest['arrival_code']})")
+        print(Fore.WHITE + f"   Departure: " + Fore.BLUE + f"{cheapest['departure_time']}")
+        print(Fore.WHITE + f"   Arrival: " + Fore.BLUE + f"{cheapest['arrival_time']}")
+        print(Fore.WHITE +f"💺  Bookable Seats: " + Fore.BLUE + f"{cheapest['bookable_seats']}")
+        print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{cheapest['num_stops']}")
+        print(Fore.WHITE +f"💲  Total Cost: " +  Fore.BLUE + f"for {adults} adult ${cheapest['total_cost']}")
         print(Fore.MAGENTA + "=" * 82)
         print("")
     else:
