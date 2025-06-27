@@ -221,7 +221,9 @@ while True:
             print("")
         
         
-    if cheapest_flights:
+        if not cheapest_flights:
+            print(Fore.RED + "No valid flights found for your search.")
+            continue
         # Find the flight with the lowest total cost
         cheapest = cheapest_flights[0]
         for flight in cheapest_flights: # Iterate through the list of cheapest flights
@@ -241,6 +243,8 @@ while True:
         print("")
     else:
         print(Fore.RED +"Failed to retrieve flight offers")
+
+
 
     # Ask user if they want to search for another flight
     again = input(Fore.CYAN +"Would you like to search for another flight? (y/n): ").strip().lower()
