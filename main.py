@@ -29,7 +29,7 @@ Airline_Codename = {
     "HA": "Hawaiian Airlines",
     "6X": "Air Odisha",
 }
-
+# Dictionary to map airport codes to names
 Airport_Codes = {
     "DAL": "Dallas Love Field",
     "LAX": "Los Angeles International Airport",
@@ -168,10 +168,11 @@ while True:
         cheapest_flights = []
         
         for i, offer in enumerate(flight_offers, 1): # Enumerate through the flight offers
+            #enumerate is a built-in Python function that lets you loop over a list to get both the index (number) and the value at the same time.
             # Gets information from the flight offer
             itinerary = offer['itineraries'][0] # Get the first itinerary from the offer
             segments = itinerary['segments'] # Get the segments of the itinerary
-            airline_arrival = segments[-1]['arrival']['iataCode']
+            airline_arrival = segments[-1]['arrival']['iataCode'] # Get the arrival airport code from the last segment
 
         # Only show flights that arrive at the requested destination
             if airline_arrival != destination:
@@ -192,7 +193,7 @@ while True:
             
 
             # Store all relevant info for cheapest flight
-            cheapest_flights += [{
+            cheapest_flights.append({ #append adds an item to the end of a list
                 "index": i,
                 "airline_name": airline_name,
                 "airline_code": airline_code,
@@ -205,7 +206,7 @@ while True:
                 "total_cost": total_cost,
                 "departure_time": departure_time,
                 "arrival_time": arrival_time
-            }]
+            })
             
             print(Fore.WHITE + Style.BRIGHT +  f"✈️  Flight {i}:")
             print("")
@@ -219,11 +220,12 @@ while True:
             print(Fore.MAGENTA + "=" * 82) # Prints a separator line
             print("")
         
-        # Print the cheapest flight
+        
     if cheapest_flights:
+        # Find the flight with the lowest total cost
         cheapest = cheapest_flights[0]
-        for flight in cheapest_flights:
-            if float(flight["total_cost"]) < float(cheapest["total_cost"]):
+        for flight in cheapest_flights: # Iterate through the list of cheapest flights
+            if float(flight["total_cost"]) < float(cheapest["total_cost"]): # Compares the total cost of the current flight with the cheapest found so far
                 cheapest = flight
         
         print(Fore.GREEN + Style.BRIGHT + "Cheapest Flight:")
@@ -242,6 +244,7 @@ while True:
 
     # Ask user if they want to search for another flight
     again = input(Fore.CYAN +"Would you like to search for another flight? (y/n): ").strip().lower()
+    print("")
     if again != "y":
         print("")
         print(Fore.RED +"Thank you for using the Flight Planner! Bye bye")
