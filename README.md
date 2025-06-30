@@ -1,6 +1,9 @@
 # ✈️ Flight-Planner2.0 🗺️
 
-This project lets users search for available flights between major airports on specific dates, using live data from the Amadeus API. In order to use this application you will need your API Key and API Secret from Amadeus, link down below.
+This project lets users search for available flights between major airports on specific dates, using live data from the Amadeus API. 
+
+
+**In order to use this application you will need your API Key and API Secret from Amadeus, link down below.**
 
 ## ✨ Features
 
