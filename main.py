@@ -187,7 +187,6 @@ while True:
 
         print("")    
         print(Fore.GREEN +"All Available Flights:")
-        print("")
         print(Fore.MAGENTA + "=" * 82)
 
         cheapest_flights = []
@@ -272,6 +271,43 @@ while True:
         print(Fore.RED +"Failed to retrieve flight offers")
         print(Fore.YELLOW + "API response details: " + search_response.text)
 
+
+    # Ask user if they want to choose a specific airline
+    choose_airline = input(Fore.CYAN + "Would you like to choose a specific airline? (y/n): ").strip().lower()
+    print("")   
+    if choose_airline == "y":
+        while True:
+            airline_choice = input(Fore.LIGHTBLUE_EX + "Enter your specified airline code " + Fore.GREEN + "(ex: AA for American Airlines): " + Fore.RESET).strip().upper()
+            if airline_choice in Airline_Codename:
+                print(Fore.MAGENTA + "=" * 82)
+                print(Fore.GREEN + f"You chose {Airline_Codename[airline_choice]} ({airline_choice})")
+                break
+            else:
+                print(Fore.RED + f"'{airline_choice}' is not a valid airline code. Please try again.")
+
+        # Print out flight details for all flights with the chosen airline
+        print("")
+        print(Fore.YELLOW + f"Flight Details for {Airline_Codename[airline_choice]} ({airline_choice}) flights from {origin} to {destination} on {date} for {adults} adults")
+        print(Fore.MAGENTA + "=" * 82)
+
+        found = False
+        for flight in cheapest_flights:
+            if flight["airline_code"] == airline_choice:
+                found = True
+                print(Fore.WHITE + Style.BRIGHT + f"✈️  Flight {flight['index']}:")
+                print(Fore.WHITE + "🧳  Airline: " + Fore.BLUE + f"{flight['airline_name']} ({flight['airline_code']})")
+                print(Fore.WHITE + f"    Route: " + Fore.BLUE + f"{flight['departure_name']} ({flight['departure_code']}) to -> {flight['arrival_name']} ({flight['arrival_code']})")
+                print(Fore.WHITE + f"    Departure: " + Fore.BLUE + f"{flight['departure_time']}")
+                print(Fore.WHITE + f"    Arrival: " + Fore.BLUE + f"{flight['arrival_time']}")
+                print(Fore.WHITE + f"💺 Bookable Seats: " + Fore.BLUE + f"{flight['bookable_seats']}")
+                print(Fore.WHITE + f"   Total Stops: " + Fore.BLUE + f"{flight['num_stops']}")
+                print(Fore.WHITE + f"💲 Total Cost: " + Fore.BLUE + f"${flight['total_cost']} {currency}")
+                print(Fore.MAGENTA + "=" * 82)
+                print("")
+        if not found:
+            print(Fore.RED + f"Sorry , no flights found for {Airline_Codename[airline_choice]} ({airline_choice}) flights from {origin} to {destination} on {date} for {adults} adults.")
+    else:
+        print(Fore.YELLOW + "You chose not to select a specific airline.")
 
 
     # Ask user if they want to search for another flight

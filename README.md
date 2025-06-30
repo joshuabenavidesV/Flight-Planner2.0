@@ -8,9 +8,10 @@ This project lets users search for available flights between major airports on s
 - 🌐 Live flight data from the Amadeus API
 - 👨‍👩‍👧‍👦 Only shows flights with enough bookable seats for your group
 - 🛫 Displays airline, route, departure/arrival times, stops, seats, and total cost
-- 💱 **Choose your preferred currency for prices**
+- 💱 Choose your preferred currency for prices
 - 🎨 Colorful, easy-to-read terminal output
 - ⚙️ Simple setup with environment variables and pip
+- ✈️ Choose flights based on specific airlines
 
 ## Getting Started
 
@@ -46,6 +47,7 @@ This project lets users search for available flights between major airports on s
 - Enter your **departure date** in `MM-DD-YYYY` format.
 - Enter the **number of adults** flying.
 - **Choose your preferred currency** (e.g., USD, EUR, GBP, CAD, AUD, JPY).
+- **Optionally, filter results by a specific airline code** (e.g., `AA` for American Airlines) when prompted.
 
 The program will display all available flights that match your criteria, including only those with enough bookable seats for your group.
 
