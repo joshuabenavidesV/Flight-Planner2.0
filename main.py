@@ -92,8 +92,9 @@ if response.status_code == 200:
     print("")
 else:
     print( Fore.RED +"Failed to retrieve access token")
-    time.sleep = 5 # Wait for 5 seconds before exiting
     print(Fore.YELLOW + "Please check your AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET in the .env file.")
+    time.sleep(5) # Wait for 5 seconds before exiting
+    
     exit() # Exit the program if the token retrieval fails
 while True:
 # Ask user for flight details
