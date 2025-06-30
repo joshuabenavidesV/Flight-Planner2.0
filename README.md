@@ -10,7 +10,7 @@ This project lets users search for available flights between major airports on s
 - 🛫 Displays airline, route, departure/arrival times, stops, seats, and total cost
 - 💱 Choose your preferred currency for prices
 - 🎨 Colorful, easy-to-read terminal output
-- ⚙️ Simple setup with environment variables and pip
+- ⚙️ Simple setup with environment variables and pip installs
 - ✈️ Choose flights based on specific airlines
 
 ## Getting Started
