@@ -1,6 +1,6 @@
 # ✈️ Flight-Planner2.0 🗺️
 
-This project lets users search for available flights between major airports on specific dates, using live data from the Amadeus API.
+This project lets users search for available flights between major airports on specific dates, using live data from the Amadeus API. In order to use this application you will need your API Key and API Secret from Amadeus, link down below.
 
 ## ✨ Features
 
@@ -8,8 +8,10 @@ This project lets users search for available flights between major airports on s
 - 🌐 Live flight data from the Amadeus API
 - 👨‍👩‍👧‍👦 Only shows flights with enough bookable seats for your group
 - 🛫 Displays airline, route, departure/arrival times, stops, seats, and total cost
+- 💱 **Choose your preferred currency for prices**
 - 🎨 Colorful, easy-to-read terminal output
 - ⚙️ Simple setup with environment variables and pip
+
 ## Getting Started
 
 1. **Create an Amadeus Developer Account**  
@@ -43,6 +45,7 @@ This project lets users search for available flights between major airports on s
 - Enter the **airport code** for your departure and destination (e.g., `DAL` for Dallas Love Field, `LAX` for Los Angeles International).
 - Enter your **departure date** in `MM-DD-YYYY` format.
 - Enter the **number of adults** flying.
+- **Choose your preferred currency** (e.g., USD, EUR, GBP, CAD, AUD, JPY).
 
 The program will display all available flights that match your criteria, including only those with enough bookable seats for your group.
 
@@ -53,7 +56,8 @@ The program will display all available flights that match your criteria, includi
 - ⏰ **Departure & Arrival Times**
 - 💺 **Bookable Seats**
 - 🔁 **Total Stops**
-- 💲 **Total Cost**
+- 💲 **Total Cost** (in your selected currency)
+
 ---
 
 🎉 **Enjoy planning your next trip!** 🌍
