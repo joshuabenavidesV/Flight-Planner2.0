@@ -7,7 +7,7 @@ This project lets users search for available flights between major airports on s
 
 ## ✨ Features
 
-- 🔎 Search for flights between major US airports on specific dates
+- 🔎 Search for flights between major airports on specific dates
 - 🌐 Live flight data from the Amadeus API
 - 👨‍👩‍👧‍👦 Only shows flights with enough bookable seats for your group
 - 🛫 Displays airline, route, departure/arrival times, stops, seats, and total cost
